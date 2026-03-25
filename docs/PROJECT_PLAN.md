@@ -61,3 +61,57 @@ Web-приложение для отслеживания и формирован
 11. Logout (Выход)
 - **URL:** `/logout/`
 - **View:** Django built-in `LogoutView`
+
+
+
+
+!! Модели базы данных !!
+
+1. User 
+- id
+- username
+- email
+- password 
+- date_join
+
+2. Habit (Привычка)
+- id (primary Key)
+- user (ForeignKey - User)
+- title (название)
+- description (описание)
+- category (категория привычки)
+- frequency (ежедневно/еженедельно)
+- created_at (дата создания)
+- updated_at (дата обновления)
+
+Методы:
+- get_streak() - текущая серия дней
+- get_best_streak() - лучшая серия
+- is_completed_today() - выполнена ли она сегодня
+
+3. HabitLog (Журнал выполнений)
+- id (Primary Key)
+- habit (ForeignKey - Habit)
+- date (дата выполнения)
+- completed (статус: выполнено или нет)
+- created_at (время записи)
+
+
+!! Технический стек !!
+
+Backend:
+- Python
+- Django (MVT архитектура)
+- SQLite 
+
+Frontend:
+- HTML5 + CSS3
+- Bootstrap 5 
+- JavaScript 
+- Chart.js (графики)
+
+Deployment:
+- GitHub 
+- PythonAnywhere (хостинг)
+
+
