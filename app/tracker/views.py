@@ -4,6 +4,7 @@ from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import logout
 from .forms import RegisterForm, LoginForm
+from django.http import HttpResponseForbidden
 
 
 def register_view(request):
@@ -52,3 +53,11 @@ def logout_view(request):
 def dashboard_view(request):
     """Главная страница (дашборд)"""
     return render(request, 'tracker/dashboard.html')
+
+def custom_403(request, exception):
+    """Пользовательская страница ошибки 403"""
+    return render(request, 'tracker/403.html', status=403)
+
+def test_403(request):
+    """Тестовая страница для проверки 403"""
+    return render(request, 'tracker/403.html', status=403)

@@ -6,7 +6,14 @@ from django.contrib.auth.forms import UserCreationForm
 class RegisterForm(UserCreationForm):
     """Форма регистрации"""
     
-    email = forms.EmailField(required=True, label="Email")
+    email = forms.EmailField(
+    required=True, 
+    label="Email",
+    error_messages={
+        'invalid': 'Введите корректный email (например, user@mail.ru)',
+        'required': 'Введите email',
+    }
+)
     
     class Meta:
         model = User
@@ -19,9 +26,22 @@ class RegisterForm(UserCreationForm):
     
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        # Добавляем классы для стилей
         for field in self.fields.values():
             field.widget.attrs.update({'class': 'form-control'})
+    
+    def clean_email(self):
+       
+        email = self.cleaned_data.get('email')
+        from django.contrib.auth.models import User
+        if User.objects.filter(email=email).exists():
+            raise forms.ValidationError("Этот email уже зарегистрирован")
+
+        import re
+        if not re.search(r'@\w+\.\w+', email):
+            raise forms.ValidationError("Некорректный формат email (например user@mail.ru)")
+        
+        return email
+
 
 
 class LoginForm(forms.Form):

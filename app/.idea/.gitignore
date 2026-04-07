@@ -1,3 +1,21 @@
 # Default ignored files
 /shelf/
 /workspace.xml
+
+# Python
+__pycache__/
+*.py[cod]
+venv/
+
+# Секретные ключи
+.env
+
+# База данных
+db.sqlite3
+
+# IDE
+.idea/
+.vscode/
+
+# Логи
+*.log
