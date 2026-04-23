@@ -1,7 +1,7 @@
 from django import forms
 from django.contrib.auth.models import User
 from django.contrib.auth.forms import UserCreationForm
-
+from .models import Habit
 
 class RegisterForm(UserCreationForm):
     """Форма регистрации"""
@@ -54,3 +54,30 @@ class LoginForm(forms.Form):
         super().__init__(*args, **kwargs)
         for field in self.fields.values():
             field.widget.attrs.update({'class': 'form-control'})
+
+
+class HabitForm(forms.ModelForm):
+    custom_category = forms.CharField(
+        max_length=50,
+        required=False,
+        label="Своя категория (если 'Другое')",
+        widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Введите свою категорию'})
+    )
+
+    class Meta:
+        model = Habit
+        fields = ['name', 'description','category', 'how_often']
+        labels = { 'name': 'Название',
+        'description': 'Описание',
+        'category': 'Категория',
+        'how_often': 'Частота выполнения',}  
+        widgets = {
+            'name': forms.TextInput(attrs={'class': 'form-control'}),
+            'description': forms.Textarea(attrs={ 
+                'class': 'form-control', 
+                'rows': 4,
+                'maxlength': 500, 
+            }),
+            'category': forms.Select(attrs= {'class': 'form-control'}),
+            'how_often': forms.Select(attrs= {'class': 'form-control'})
+        }

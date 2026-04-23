@@ -37,6 +37,16 @@
             color: #333 !important;
             font-weight: bold;
         }
+        .btn-delete {
+        background-color: #FF9999;
+        color: white;
+        border: none;
+        }
+    
+        .btn-delete:hover {
+        background-color: #e68a8a;
+        color: white;
+        }
     </style>
 </head>
 <body>
@@ -53,6 +63,35 @@
     <div class="container mt-4">
         <h1>Добро пожаловать, {{ user.username }}!!!!</h1>
         <p class="lead">Это ваша главная страница. Здесь будет список привычек</p>
+
+<a href="{% url 'create_habit' %}" class="btn btn-primary mb-3"> Создать привычку</a>
+
+{% if habits %}
+    <div class="row">
+        {% for habit in habits %}
+            <div class="col-md-4 mb-3">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">{{ habit.name }}</h5>
+                        <p class="card-text">{{ habit.description }}</p>
+                        <small class="text-muted">
+                            Категория: {{ habit.get_category_display }}<br>
+                            Частота: {{ habit.get_how_often_display }}
+                        </small>
+                        <a href="{% url 'delete_habit' habit.id %}" 
+                           class="btn btn-delete btn-sm mt-2"
+                           onclick="return confirm('Точно удалить эту привычку?')">
+                           Удалить
+                        </a>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+{% else %}
+    <p>У вас пока нет привычек. Создайте первую</p>
+{% endif %}
+
         
         <div class="alert alert-info">
             <strong> Скоро здесь будет:</strong>

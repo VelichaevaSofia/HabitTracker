@@ -5,7 +5,8 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth import logout
 from .forms import RegisterForm, LoginForm
 from django.http import HttpResponseForbidden
-
+from .forms import HabitForm
+from .models import Habit
 
 def register_view(request):
     """Регистрация пользователя"""
@@ -52,7 +53,8 @@ def logout_view(request):
 @login_required
 def dashboard_view(request):
     """Главная страница (дашборд)"""
-    return render(request, 'tracker/dashboard.html')
+    habits = Habit.objects.filter(user=request.user)
+    return render(request, 'tracker/dashboard.html', {'habits': habits})
 
 def custom_403(request, exception):
     """Пользовательская страница ошибки 403"""
@@ -61,3 +63,22 @@ def custom_403(request, exception):
 def test_403(request):
     """Тестовая страница для проверки 403"""
     return render(request, 'tracker/403.html', status=403)
+
+@login_required
+def create_habit(request):
+    if request.method == 'POST':
+        form = HabitForm (request.POST)
+        if form.is_valid():
+            habit = form.save (commit=False)
+            habit.user = request.user
+            habit.save()
+            return redirect('dashboard')
+    else:
+        form = HabitForm()
+    return render(request, 'tracker/create_habit.html', {'form': form}) 
+
+@login_required
+def delete_habit(request, habit_id):
+    habit = Habit.objects.get(id=habit_id, user=request.user)
+    habit.delete()
+    return redirect('dashboard')
