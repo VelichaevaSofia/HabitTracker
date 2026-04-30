@@ -7,6 +7,7 @@ from .forms import RegisterForm, LoginForm
 from django.http import HttpResponseForbidden
 from .forms import HabitForm
 from .models import Habit
+from django.shortcuts import render, redirect, get_object_or_404
 
 def register_view(request):
     """Регистрация пользователя"""
@@ -82,3 +83,16 @@ def delete_habit(request, habit_id):
     habit = Habit.objects.get(id=habit_id, user=request.user)
     habit.delete()
     return redirect('dashboard')
+
+@login_required
+def edit_habit(request, habit_id):
+    habit = get_object_or_404(Habit, id=habit_id, user=request.user)
+    if request.method == 'POST':
+        form = HabitForm(request.POST, instance=habit)
+        if form.is_valid():
+            form.save()  
+            return redirect('dashboard')
+    else:
+        form = HabitForm(instance=habit)
+    
+    return render(request, 'tracker/edit_habit.html', {'form': form})

@@ -47,6 +47,18 @@
         background-color: #e68a8a;
         color: white;
         }
+
+        .btn-edit {
+        background-color: #FFB3B3;
+        color: white;
+        border: none;
+        }
+
+        .btn-edit:hover {
+        background-color: #ff9999;
+        color: white;
+        }
+
     </style>
 </head>
 <body>
@@ -78,6 +90,10 @@
                             Категория: {{ habit.get_category_display }}<br>
                             Частота: {{ habit.get_how_often_display }}
                         </small>
+                        <a href="{% url 'edit_habit' habit.id %}" 
+                           class="btn btn-edit btn-sm mt-2 me-2">
+                           Редактировать
+                        </a>
                         <a href="{% url 'delete_habit' habit.id %}" 
                            class="btn btn-delete btn-sm mt-2"
                            onclick="return confirm('Точно удалить эту привычку?')">

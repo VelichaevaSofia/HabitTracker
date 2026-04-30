@@ -10,4 +10,5 @@ urlpatterns = [
     path('test-403/', views.test_403, name='test_403'),
     path('create/', views.create_habit, name= 'create_habit'),
     path('habit/<int:habit_id>/delete/', views.delete_habit, name='delete_habit'),
+    path('habit/<int:habit_id>/edit/', views.edit_habit, name='edit_habit'),
 ]
