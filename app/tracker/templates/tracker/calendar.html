@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Календарь - HabitTracker</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #FFCCCC;
+        }
+        .navbar {
+            background-color: #FF9999 !important;
+        }
+        .calendar-header {
+            background: white;
+            border-radius: 12px;
+            padding: 25px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        .calendar-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 10px;
+        }
+        .day-header {
+            text-align: center;
+            font-weight: bold;
+            padding: 12px;
+            background: #FF9999;
+            color: white;
+            border-radius: 8px;
+        }
+        .day-cell {
+            background: white;
+            border-radius: 10px;
+            min-height: 120px;
+            padding: 10px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .day-number {
+            font-weight: bold;
+            font-size: 1.2rem;
+            margin-bottom: 8px;
+        }
+        .habit-item {
+            font-size: 0.85rem;
+            padding: 4px 8px;
+            margin: 2px 0;
+            border-radius: 5px;
+            background: #f8f9fa;
+        }
+        .habit-completed {
+            background: #90EE90;
+            color: #2d5a2d;
+        }
+        .habit-pending {
+            background: #ffe6e6;
+            color: #cc0000;
+        }
+        .empty-cell {
+            background: transparent;
+        }
+        
+        .control-panel {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        .control-panel select {
+            border: 2px solid #FF9999;
+            border-radius: 8px;
+            padding: 8px 30px 8px 12px; 
+            min-width: 100px;
+        }
+        
+        #yearSelect {
+            min-width: 130px;
+        }
+        
+        #monthSelect {
+            min-width: 140px;
+        }
+        .control-panel select:focus {
+            border-color: #FF6666;
+            box-shadow: 0 0 0 0.2rem rgba(255, 153, 153, 0.25);
+        }
+        .btn-show {
+            background-color: #FF9999;
+            border: none;
+            color: white;
+            padding: 8px 20px;
+            border-radius: 8px;
+            transition: all 0.3s;
+        }
+        .btn-show:hover {
+            background-color: #FF6666;
+            color: white;
+        }
+        .btn-nav {
+            background-color: #FFE5E5;
+            border: none;
+            color: #CC0000;
+            padding: 8px 16px;
+            border-radius: 8px;
+            transition: all 0.3s;
+        }
+        .btn-nav:hover {
+            background-color: #FF9999;
+            color: white;
+        }
+        .current-month {
+            font-size: 1.1rem;
+            font-weight: 500;
+            color: #333;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark">
+        <div class="container">
+            <a class="navbar-brand" href="{% url 'dashboard' %}">HabitTracker</a>
+            <div class="navbar-nav ms-auto">
+                <a class="nav-link" href="{% url 'dashboard' %}"> На главную</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container mt-4">
+        
+        <div class="calendar-header text-center">
+            <h2 class="mb-0">Календарь привычек</h2>
+        </div>
+
+        <div class="control-panel">
+            <form method="get" action="{% url 'calendar' %}" class="row align-items-center justify-content-center g-3">
+                <div class="col-auto">
+                    <label for="monthSelect" class="form-label mb-0 fw-bold">Месяц:</label>
+                </div>
+                <div class="col-auto">
+                    <select name="month" class="form-select" id="monthSelect">
+                        <option value="1" {% if month == 1 %}selected{% endif %}>Январь</option>
+                        <option value="2" {% if month == 2 %}selected{% endif %}>Февраль</option>
+                        <option value="3" {% if month == 3 %}selected{% endif %}>Март</option>
+                        <option value="4" {% if month == 4 %}selected{% endif %}>Апрель</option>
+                        <option value="5" {% if month == 5 %}selected{% endif %}>Май</option>
+                        <option value="6" {% if month == 6 %}selected{% endif %}>Июнь</option>
+                        <option value="7" {% if month == 7 %}selected{% endif %}>Июль</option>
+                        <option value="8" {% if month == 8 %}selected{% endif %}>Август</option>
+                        <option value="9" {% if month == 9 %}selected{% endif %}>Сентябрь</option>
+                        <option value="10" {% if month == 10 %}selected{% endif %}>Октябрь</option>
+                        <option value="11" {% if month == 11 %}selected{% endif %}>Ноябрь</option>
+                        <option value="12" {% if month == 12 %}selected{% endif %}>Декабрь</option>
+                    </select>
+                </div>
+                
+                <div class="col-auto">
+                    <label for="yearSelect" class="form-label mb-0 fw-bold">Год:</label>
+                </div>
+                <div class="col-auto">
+                    <select name="year" class="form-select" id="yearSelect">
+                        {% for y in years_range %}
+                            <option value="{{ y }}" {% if year == y %}selected{% endif %}>{{ y }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </form>
+        </div>
+
+        <div class="text-center mb-3">
+            <a href="{% url 'calendar_month' prev_year prev_month %}" class="btn btn-nav me-2">
+                Предыдущий
+            </a>
+            <span class="current-month">{{ month_name }} {{ year }}</span>
+            <a href="{% url 'calendar_month' next_year next_month %}" class="btn btn-nav ms-2">
+                Следующий 
+            </a>
+        </div>
+
+        <div class="calendar-grid">
+            {% for day_name in day_names %}
+                <div class="day-header">{{ day_name }}</div>
+            {% endfor %}
+
+            {% for i in empty_days %}
+                <div class="day-cell empty-cell"></div>
+            {% endfor %}
+
+            {% for day in days_in_month %}
+                <div class="day-cell">
+                    <div class="day-number">{{ day.day_number }}</div>
+                    
+                    {% for item in day.habits %}
+                        <div class="habit-item {% if item.is_completed %}habit-completed{% else %}habit-pending{% endif %}">
+                            {% if item.is_completed %}{% else %}{% endif %} 
+                            {{ item.habit.name|truncatechars:20 }}
+                        </div>
+                    {% empty %}
+                        <small class="text-muted">Нет привычек</small>
+                    {% endfor %}
+                </div>
+            {% endfor %}
+        </div>
+
+    </div>
+
+    <script>
+        document.getElementById('monthSelect').addEventListener('change', function() {
+            this.form.submit();
+        });
+        
+        document.getElementById('yearSelect').addEventListener('change', function() {
+            this.form.submit();
+        });
+    </script>
+</body>
+</html>

@@ -1,8 +1,8 @@
-# Default ignored files
+# Игнор файлы по умолчанию
 /shelf/
 /workspace.xml
 
-# Python
+# Питон
 __pycache__/
 *.py[cod]
 venv/

@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Сегодня - HabitTracker</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #FFCCCC;
+        }
+        .navbar {
+            background-color: #FF9999 !important;
+        }
+        .today-header {
+            background: white;
+            border-radius: 12px;
+            padding: 30px;
+            margin-bottom: 20px;
+            text-align: center;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        .progress-card {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        .habit-card {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 15px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            transition: all 0.3s;
+        }
+        .habit-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+        }
+        .habit-card.completed {
+            background: #f0fff0;
+            border-left: 4px solid #90EE90;
+        }
+        .habit-card.pending {
+            background: #fff5f5;
+            border-left: 4px solid #FFB3B3;
+        }
+        .btn-complete {
+            background-color: #FF9999;
+            border: none;
+            color: white;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-size: 1.1rem;
+            transition: all 0.3s;
+        }
+        .btn-complete:hover {
+            background-color: #FF6666;
+            color: white;
+        }
+        .btn-complete.done {
+            background-color: #90EE90;
+            color: #2d5a2d;
+        }
+        .btn-complete.done:hover {
+            background-color: #70DD70;
+        }
+        .progress-bar-custom {
+            background-color: #FF9999;
+        }
+        .empty-state {
+            text-align: center;
+            padding: 40px;
+            background: white;
+            border-radius: 12px;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark">
+        <div class="container">
+            <a class="navbar-brand" href="{% url 'dashboard' %}">HabitTracker</a>
+            <div class="navbar-nav ms-auto">
+                <a class="nav-link" href="{% url 'dashboard' %}">На главную</a>
+                <a class="nav-link" href="{% url 'calendar' %}">Календарь</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container mt-4">
+        <div class="today-header">
+            <h2 class="mb-2"> {{ day_name }}</h2>
+            <p class="text-muted mb-0">{{ today|date:"d.m.Y" }}</p>
+        </div>
+
+        <div class="progress-card">
+            <div class="row align-items-center">
+                <div class="col-md-8">
+                    <h5 class="mb-2">Прогресс на сегодня</h5>
+                    <div class="progress" style="height: 25px;">
+                        <div class="progress-bar progress-bar-custom" 
+                             role="progressbar" 
+                             style="width: {{ progress_percent }}%;" 
+                             aria-valuenow="{{ progress_percent }}" 
+                             aria-valuemin="0" 
+                             aria-valuemax="100">
+                            {{ completed }} из {{ total }}
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4 text-end">
+                    <h3 class="mb-0">{{ progress_percent|floatformat:0 }}%</h3>
+                    <small class="text-muted">Выполнено</small>
+                </div>
+            </div>
+        </div>
+
+        {% if today_habits %}
+            {% for item in today_habits %}
+                <div class="habit-card {% if item.is_completed %}completed{% else %}pending{% endif %}">
+                    <div class="row align-items-center">
+                        <div class="col-md-8">
+                            <h5 class="mb-1">
+                                {% if item.is_completed %}{% else %}{% endif %}
+                                {{ item.habit.name }}
+                            </h5>
+                            <p class="text-muted mb-1">{{ item.habit.description }}</p>
+                            <small class="text-muted">
+                                 {{ item.habit.get_category_display }} | 
+                            </small>
+                        </div>
+                        <div class="col-md-4 text-end">
+                            <button class="btn btn-complete {% if item.is_completed %}done{% endif %}" 
+                                    onclick="toggleCompletion({{ item.habit.id }}, this)">
+                                {% if item.is_completed %}
+                                    Выполнено
+                                {% else %}
+                                    Отметить выполненным
+                                {% endif %}
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        {% else %}
+            <div class="empty-state">
+                <h4> На сегодня нет запланированных привычек!</h4>
+                <p class="text-muted">Отдохни или создай новую привычку на дашборде</p>
+                <a href="{% url 'create_habit' %}" class="btn btn-primary mt-3">Создать привычку</a>
+            </div>
+        {% endif %}
+    </div>
+
+    <script>
+        function toggleCompletion(habitId, button) {
+            fetch('/habit/' + habitId + '/toggle/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': getCookie('csrftoken')
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.is_completed) {
+                    button.textContent = 'Выполнено';
+                    button.classList.add('done');
+                    button.parentElement.parentElement.parentElement.classList.remove('pending');
+                    button.parentElement.parentElement.parentElement.classList.add('completed');
+                } else {
+                    button.textContent = 'Отметить выполненным';
+                    button.classList.remove('done');
+                    button.parentElement.parentElement.parentElement.classList.remove('completed');
+                    button.parentElement.parentElement.parentElement.classList.add('pending');
+                }
+                
+                setTimeout(() => {
+                    location.reload();
+                }, 500);
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Произошла ошибка. Попробуй ещё раз');
+            });
+        }
+
+        function getCookie(name) {
+            let cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                const cookies = document.cookie.split(';');
+                for (let i = 0; i < cookies.length; i++) {
+                    const cookie = cookies[i].trim();
+                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
+    </script>
+</body>
+</html>

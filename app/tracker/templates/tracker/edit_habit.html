@@ -12,6 +12,69 @@
         .navbar {
             background-color: #FF9999 !important;
         }
+        .schedule-btn {
+            flex: 1;
+            min-width: 120px;
+        }
+        .day-checkbox-label {
+            cursor: pointer;
+            user-select: none;
+        }
+        .day-checkbox-label:hover {
+            background-color: #f8f9fa;
+        }
+
+        .btn-primary {
+            background-color: #ed697d !important;
+            border-color: #ed697d !important;
+            color: #ffffff !important;
+        }
+
+        .btn-primary:hover {
+            background-color: #d4556a !important;
+            border-color: #d4556a !important;
+        }
+        
+        .btn-check:checked + .btn-outline-primary {
+            background-color: #ed697d !important;
+            border-color: #ed697d !important;
+            color: #ffffff !important;
+        }
+
+        .form-check-input:checked {
+            background-color: #ed697d !important;
+            border-color: #ed697d !important;
+        }
+
+        input[type="checkbox"]:checked {
+            accent-color: #ed697d;
+        }
+    
+        .btn-outline-primary {
+            color: #ed697d !important;
+            border-color: #ed697d !important;
+        }
+
+        .btn-outline-primary:hover {
+            background-color: #ed697d !important;
+            border-color: #ed697d !important;
+            color: #ffffff !important;
+        }   
+
+        a[href*="dashboard"] {
+            color: #ed697d !important;
+            text-decoration: none !important;
+        }       
+
+        a[href*="dashboard"]:hover {
+            color: #d4556a !important;
+            text-decoration: underline !important;
+        }
+
+        a[href*="dashboard"],
+        a:contains("На главную") {
+            text-decoration: underline !important;
+        }
     </style>
 </head>
 <body>
@@ -20,76 +83,220 @@
             <a class="navbar-brand" href="{% url 'dashboard' %}">HabitTracker</a>
         </div>
     </nav>
-    
+
     <div class="container">
         <div class="row justify-content-center">
             <div class="col-md-6">
                 <div class="card shadow">
                     <div class="card-body p-4">
                         <h2 class="text-center mb-4">Редактировать привычку</h2>
-                        
+
                         <form method="post">
                             {% csrf_token %}
-                            
+
                             <div class="mb-3">
                                 {{ form.name.label_tag }}
                                 {{ form.name }}
                             </div>
-                            
+
                             <div class="mb-3">
                                 {{ form.description.label_tag }}
                                 {{ form.description }}
                             </div>
-                            
+
                             <div class="mb-3">
                                 {{ form.category.label_tag }}
                                 {{ form.category }}
                             </div>
-                            
+
                             <div class="mb-3" id="custom_category_container" style="display: none;">
                                 {{ form.custom_category.label_tag }}
                                 {{ form.custom_category }}
                             </div>
-                            
-                            <div class="mb-3">
-                                {{ form.how_often.label_tag }}
-                                {{ form.how_often }}
+
+                            <div class="mb-3 p-3 bg-white rounded border">
+                                <label class="form-label fw-bold mb-3"> Дни выполнения</label>
+                                
+                                <div class="mb-4">
+                                    <div class="btn-group w-100" role="group">
+                                        <input type="radio" class="btn-check" name="schedule_type" 
+                                               id="schedule_daily" value="daily">
+                                        <label class="btn btn-outline-primary schedule-btn" for="schedule_daily">
+                                            Ежедневно
+                                        </label>
+
+                                        <input type="radio" class="btn-check" name="schedule_type" 
+                                               id="schedule_weekdays" value="weekdays">
+                                        <label class="btn btn-outline-primary schedule-btn" for="schedule_weekdays">
+                                            По будням
+                                        </label>
+
+                                        <input type="radio" class="btn-check" name="schedule_type" 
+                                               id="schedule_weekends" value="weekends">
+                                        <label class="btn btn-outline-primary schedule-btn" for="schedule_weekends">
+                                            По выходным
+                                        </label>
+
+                                        <input type="radio" class="btn-check" name="schedule_type" 
+                                               id="schedule_custom" value="custom">
+                                        <label class="btn btn-outline-primary schedule-btn" for="schedule_custom">
+                                            Выбрать дни
+                                        </label>
+                                    </div>
+                                </div>
+
+                                <div class="row g-2">
+                                    <div class="col-4">
+                                        <div class="form-check">
+                                            <input class="form-check-input day-checkbox" type="checkbox" 
+                                                   name="days_of_week" value="0" id="id_days_of_week_0">
+                                            <label class="form-check-label day-checkbox-label" for="id_days_of_week_0">
+                                                Пн
+                                            </label>
+                                        </div>
+                                    </div>
+                                    <div class="col-4">
+                                        <div class="form-check">
+                                            <input class="form-check-input day-checkbox" type="checkbox" 
+                                                   name="days_of_week" value="1" id="id_days_of_week_1">
+                                            <label class="form-check-label day-checkbox-label" for="id_days_of_week_1">
+                                                Вт
+                                            </label>
+                                        </div>
+                                    </div>
+                                    <div class="col-4">
+                                        <div class="form-check">
+                                            <input class="form-check-input day-checkbox" type="checkbox" 
+                                                   name="days_of_week" value="2" id="id_days_of_week_2">
+                                            <label class="form-check-label day-checkbox-label" for="id_days_of_week_2">
+                                                Ср
+                                            </label>
+                                        </div>
+                                    </div>
+                                    <div class="col-4">
+                                        <div class="form-check">
+                                            <input class="form-check-input day-checkbox" type="checkbox" 
+                                                   name="days_of_week" value="3" id="id_days_of_week_3">
+                                            <label class="form-check-label day-checkbox-label" for="id_days_of_week_3">
+                                                Чт
+                                            </label>
+                                        </div>
+                                    </div>
+                                    <div class="col-4">
+                                        <div class="form-check">
+                                            <input class="form-check-input day-checkbox" type="checkbox" 
+                                                   name="days_of_week" value="4" id="id_days_of_week_4">
+                                            <label class="form-check-label day-checkbox-label" for="id_days_of_week_4">
+                                                Пт
+                                            </label>
+                                        </div>
+                                    </div>
+                                    <div class="col-4">
+                                        <div class="form-check">
+                                            <input class="form-check-input day-checkbox" type="checkbox" 
+                                                   name="days_of_week" value="5" id="id_days_of_week_5">
+                                            <label class="form-check-label day-checkbox-label" for="id_days_of_week_5">
+                                                Сб
+                                            </label>
+                                        </div>
+                                    </div>
+                                    <div class="col-4">
+                                        <div class="form-check">
+                                            <input class="form-check-input day-checkbox" type="checkbox" 
+                                                   name="days_of_week" value="6" id="id_days_of_week_6">
+                                            <label class="form-check-label day-checkbox-label" for="id_days_of_week_6">
+                                                Вс
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
-                            
+
                             <button type="submit" class="btn btn-primary w-100">Сохранить изменения</button>
                         </form>
-                        
+
                         <div class="text-center mt-3">
-                            <a href="{% url 'dashboard' %}">← На главную</a>
+                            <a href="{% url 'dashboard' %}">На главную</a>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-    
+
     <script>
-        const categoryField = document.getElementById('id_category');
-        const customCategoryContainer = document.getElementById('custom_category_container');
-        const customCategoryField = document.getElementById('id_custom_category');
-        
-        function toggleCustomCategory() {
-            if (categoryField && customCategoryContainer && customCategoryField) {
-                if (categoryField.value === 'other') {
-                    customCategoryContainer.style.display = 'block';
-                    customCategoryField.required = true;
-                } else {
-                    customCategoryContainer.style.display = 'none';
-                    customCategoryField.required = false;
+        document.addEventListener('DOMContentLoaded', function() {
+            const categoryField = document.getElementById('id_category');
+            const customCategoryContainer = document.getElementById('custom_category_container');
+            const customCategoryField = document.getElementById('id_custom_category');
+
+            function toggleCustomCategory() {
+                if (categoryField && customCategoryContainer && customCategoryField) {
+                    if (categoryField.value === 'other') {
+                        customCategoryContainer.style.display = 'block';
+                        customCategoryField.required = true;
+                    } else {
+                        customCategoryContainer.style.display = 'none';
+                        customCategoryField.required = false;
+                    }
                 }
             }
-        }
-        
-        toggleCustomCategory();
-        
-        if (categoryField) {
-            categoryField.addEventListener('change', toggleCustomCategory);
-        }
+            toggleCustomCategory();
+            if (categoryField) {
+                categoryField.addEventListener('change', toggleCustomCategory);
+            }
+
+            const scheduleRadios = document.querySelectorAll('input[name="schedule_type"]');
+            const dayCheckboxes = document.querySelectorAll('input[name="days_of_week"]');
+
+            function applySchedule(type) {
+                dayCheckboxes.forEach(cb => {
+                    cb.checked = false;
+                    cb.disabled = true;
+                    cb.parentElement.style.opacity = '0.5';
+                });
+
+                if (type === 'daily') {
+                    dayCheckboxes.forEach(cb => {
+                        cb.checked = true;
+                        cb.disabled = true;
+                        cb.parentElement.style.opacity = '1';
+                    });
+                } else if (type === 'weekdays') {
+                    for (let i = 0; i <= 4; i++) {
+                        const cb = document.getElementById('id_days_of_week_' + i);
+                        if (cb) { 
+                            cb.checked = true; 
+                            cb.disabled = true; 
+                            cb.parentElement.style.opacity = '1';
+                        }
+                    }
+                } else if (type === 'weekends') {
+                    for (let i = 5; i <= 6; i++) {
+                        const cb = document.getElementById('id_days_of_week_' + i);
+                        if (cb) { 
+                            cb.checked = true; 
+                            cb.disabled = true; 
+                            cb.parentElement.style.opacity = '1';
+                        }
+                    }
+                } else {
+                    dayCheckboxes.forEach(cb => {
+                        cb.disabled = false;
+                        cb.parentElement.style.opacity = '1';
+                    });
+                }
+            }
+
+            scheduleRadios.forEach(radio => {
+                radio.addEventListener('change', function() {
+                    applySchedule(this.value);
+                });
+            });
+
+            document.getElementById('schedule_daily').checked = true;
+            applySchedule('daily');
+        });
     </script>
 </body>
 </html>
